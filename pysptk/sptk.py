@@ -1652,7 +1652,10 @@ def rapt(x, fs, hopsize, min=60, max=240, voice_bias=0.0, otype="f0"):
 
     """
 
-    return _sptk.rapt(x, fs, hopsize, min, max, voice_bias, otype)
+    f0 = _sptk.rapt(x, fs, hopsize, min, max, voice_bias, otype)
+    if otype in ['mixed', 5]:
+        f0 = f0.reshape((f0.shape[0]/4, 4))
+    return f0
 
 ### Window functions ###
 

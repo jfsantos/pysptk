@@ -166,8 +166,8 @@ def mgcep(np.ndarray[np.float64_t, ndim=1, mode="c"] windowed not None,
     if not etype in range(0, 3):
         raise ValueError("unsupported etype: %d, must be in 0:2" % etype)
 
-    if etype == 0 and eps != 0.0:
-        raise ValueError("eps cannot be specified for etype = 0")
+    #if etype == 0 and eps != 0.0:
+    #    raise ValueError("eps cannot be specified for etype = 0")
 
     if (etype == 1 or etype == 2) and eps < 0.0:
         raise ValueError("eps: %f, must be >= 0" % eps)
@@ -611,10 +611,10 @@ def swipe(np.ndarray[np.float64_t, ndim=1, mode="c"] x not None,
 def rapt(np.ndarray[np.float32_t, ndim=1, mode="c"] x not None,
          fs, hopsize,
          min=60, max=240, voice_bias=0.0, otype="f0"):
-    supported_otypes = ["pitch", "f0", "logf0"]
-    if isinstance(otype, int) and (not otype in range(0, 3)) or \
+    supported_otypes = ["pitch", "f0", "logf0", "", "", "mixed"]
+    if isinstance(otype, int) and (not otype in [0, 1, 2, 5]) or \
        isinstance(otype, str) and not otype in supported_otypes:
-        raise ValueError("otype must be (0) pitch, (1) f0, or (2) log(f0) ")
+        raise ValueError("otype must be (0) pitch, (1) f0, (2) log(f0), or (5) mixed ")
 
     if isinstance(otype, str):
         otype = supported_otypes.index(otype)
@@ -632,7 +632,12 @@ def rapt(np.ndarray[np.float32_t, ndim=1, mode="c"] x not None,
     cdef int expected_len = int(np.ceil(float(x_length) / hopsize))
     cdef int ret
 
-    f0 = np.empty(expected_len, dtype=np.float32)
+    f0 = np.empty(0, dtype=np.float32)
+
+    if otype == 5:
+        f0 = np.empty(expected_len*4, dtype=np.float32)
+    else:
+        f0 = np.empty(expected_len, dtype=np.float32)
 
     ret = _rapt(&x[0], &f0[0], x_length, fs, hopsize, min, max,
                 voice_bias, otype)
@@ -642,7 +647,7 @@ def rapt(np.ndarray[np.float32_t, ndim=1, mode="c"] x not None,
         raise RuntimeError("problem in init_dp_f0()")
 
     assert ret == 0
-
+    
     return f0
 
 
