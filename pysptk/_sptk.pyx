@@ -795,7 +795,7 @@ def mglsadf(x, np.ndarray[np.float64_t, ndim=1, mode="c"] b not None,
 
 ### Excitation ###
 
-def excite(np.ndarray[np.float64_t, ndim=1, mode = "c"] pitch, frame_period=100, interp_period=1, gaussian=False, seed=1):
+def excite(np.ndarray[np.float64_t, ndim=1, mode = "c"] pitch, frame_period=100, interp_period=1, noise=True, gaussian=False, seed=1):
     # Allocate memory for output
     cdef np.ndarray[np.float64_t, ndim = 1, mode = "c"] excitation
     cdef int n = len(pitch)
@@ -803,7 +803,7 @@ def excite(np.ndarray[np.float64_t, ndim=1, mode = "c"] pitch, frame_period=100,
 
     excitation = np.empty(expected_len, dtype=np.float64)
     # Call
-    _excite(&pitch[0], n, &excitation[0], frame_period, interp_period, gaussian, seed)
+    _excite(&pitch[0], n, &excitation[0], frame_period, interp_period, noise, gaussian, seed)
     # Return allocated output
     return excitation
 
