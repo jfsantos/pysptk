@@ -1652,7 +1652,10 @@ def rapt(x, fs, hopsize, min=60, max=240, voice_bias=0.0, otype="f0"):
 
     """
 
-    return _sptk.rapt(x, fs, hopsize, min, max, voice_bias, otype)
+    f0 = _sptk.rapt(x, fs, hopsize, min, max, voice_bias, otype)
+    if otype in ['mixed', 5]:
+        f0 = f0.reshape((f0.shape[0]/4, 4))
+    return f0
 
 ### Window functions ###
 
@@ -2239,7 +2242,7 @@ def mglsadf(x, b, alpha, stage, delay):
 
 ### Excitation ###
 
-def excite(pitch, hopsize=100, interp_period=1, gaussian=False, seed=1):
+def excite(pitch, hopsize=100, interp_period=1, noise=True, gaussian=False, seed=1):
     """Excitation generation
 
     Parameters
@@ -2280,7 +2283,7 @@ def excite(pitch, hopsize=100, interp_period=1, gaussian=False, seed=1):
 
 
     """
-    return _sptk.excite(pitch, hopsize, interp_period, gaussian, seed)
+    return _sptk.excite(pitch, hopsize, interp_period, noise, gaussian, seed)
 
 
 ### Utils ###
